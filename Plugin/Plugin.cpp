@@ -337,13 +337,13 @@ extern "C"
         "/tcia/app/js/vue.min.js");
 
       RegisterEmbeddedResource<EmbeddedResources::TCIA_LOGO, MimeType_Png>(
-        "/tcia/app/tcia-logo.png");
+        "/tcia/app/images/tcia-logo.png");
 
       RegisterEmbeddedResource<EmbeddedResources::ORTHANC_LOGO, MimeType_Png>(
-        "/tcia/app/orthanc-logo.png");
+        "/tcia/app/images/orthanc-logo.png");
 
       RegisterEmbeddedResource<EmbeddedResources::NBIA_EXPORT, MimeType_Png>(
-        "/tcia/app/nbia-export.png");
+        "/tcia/app/images/nbia-export.png");
     }
 
     return 0;

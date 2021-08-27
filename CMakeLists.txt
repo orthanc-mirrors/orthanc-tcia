@@ -103,7 +103,7 @@ if (STANDALONE_BUILD)
 else()
   add_definitions(
     -DORTHANC_STANDALONE=0
-    -DTCIA_SOURCE_DIR="${CMAKE_SOURCE_DIR}/WebApplication/"
+    -DTCIA_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
     )
 endif()
 
