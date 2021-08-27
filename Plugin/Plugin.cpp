@@ -301,49 +301,78 @@ extern "C"
     }
 
     OrthancPluginSetDescription(context, "Interface with TCIA (The Cancer Imaging Archive).");
-    OrthancPluginSetRootUri(context, "/tcia/app/index.html");
 
+    try
     {
-      std::string explorer;
-      Orthanc::EmbeddedResources::GetFileResource(
-        explorer, Orthanc::EmbeddedResources::ORTHANC_EXPLORER_JS);
-      OrthancPluginExtendOrthancExplorer(OrthancPlugins::GetGlobalContext(), explorer.c_str());
-    }
-  
-    OrthancPluginRegisterJobsUnserializer(context, TciaJobUnserializer);
-
-    OrthancPlugins::RegisterRestCallback<ServeHtml>("/tcia/app/index.html", true /* thread safe */);
-    OrthancPlugins::RegisterRestCallback<ServeJavaScript>("/tcia/app/app.js", true /* thread safe */);
-    OrthancPlugins::RegisterRestCallback<ClearCache>("/tcia/clear-cache", true /* thread safe */);
-    OrthancPlugins::RegisterRestCallback<TciaHttpProxy>("/tcia/proxy/(.*)", true /* thread safe */);
-    OrthancPlugins::RegisterRestCallback<TciaImport>("/tcia/import", true /* thread safe */);
-
-    {
-      using namespace Orthanc;
+      static const char* const KEY_TCIA = "Tcia";
       
-      RegisterEmbeddedResource<EmbeddedResources::BOOTSTRAP_MIN_CSS, MimeType_Css>(
-        "/tcia/app/css/bootstrap.min.css");
+      OrthancPlugins::OrthancConfiguration configuration;
 
-      RegisterEmbeddedResource<EmbeddedResources::BOOTSTRAP_MIN_CSS_MAP, MimeType_Binary>(
-        "/tcia/app/css/bootstrap.min.css.map");
+      if (!configuration.IsSection(KEY_TCIA))
+      {
+        LOG(WARNING) << "No available configuration for the TCIA plugin, disabling it";
+        return 0;
+      }
+      
+      OrthancPlugins::OrthancConfiguration tcia;
+      configuration.GetSection(tcia, KEY_TCIA);
 
-      RegisterEmbeddedResource<EmbeddedResources::AXIOS_MIN_JS, MimeType_JavaScript>(
-        "/tcia/app/js/axios.min.js");
+      if (!tcia.GetBooleanValue("Enable", false))
+      {
+        LOG(WARNING) << "The TCIA index is currently disabled, set \"Enable\" "
+                     << "to \"true\" in the \"" << KEY_TCIA << "\" section of the configuration file of Orthanc";
+        return 0;
+      }
+      
+      OrthancPluginSetRootUri(context, "/tcia/app/index.html");
 
-      RegisterEmbeddedResource<EmbeddedResources::AXIOS_MIN_MAP, MimeType_JavaScript>(
-        "/tcia/app/js/axios.min.map");
+      {
+        std::string explorer;
+        Orthanc::EmbeddedResources::GetFileResource(
+          explorer, Orthanc::EmbeddedResources::ORTHANC_EXPLORER_JS);
+        OrthancPluginExtendOrthancExplorer(OrthancPlugins::GetGlobalContext(), explorer.c_str());
+      }
+  
+      OrthancPluginRegisterJobsUnserializer(context, TciaJobUnserializer);
 
-      RegisterEmbeddedResource<EmbeddedResources::VUE_MIN_JS, MimeType_JavaScript>(
-        "/tcia/app/js/vue.min.js");
+      OrthancPlugins::RegisterRestCallback<ServeHtml>("/tcia/app/index.html", true /* thread safe */);
+      OrthancPlugins::RegisterRestCallback<ServeJavaScript>("/tcia/app/app.js", true /* thread safe */);
+      OrthancPlugins::RegisterRestCallback<ClearCache>("/tcia/clear-cache", true /* thread safe */);
+      OrthancPlugins::RegisterRestCallback<TciaHttpProxy>("/tcia/proxy/(.*)", true /* thread safe */);
+      OrthancPlugins::RegisterRestCallback<TciaImport>("/tcia/import", true /* thread safe */);
 
-      RegisterEmbeddedResource<EmbeddedResources::TCIA_LOGO, MimeType_Png>(
-        "/tcia/app/images/tcia-logo.png");
+      {
+        using namespace Orthanc;
+      
+        RegisterEmbeddedResource<EmbeddedResources::BOOTSTRAP_MIN_CSS, MimeType_Css>(
+          "/tcia/app/css/bootstrap.min.css");
 
-      RegisterEmbeddedResource<EmbeddedResources::ORTHANC_LOGO, MimeType_Png>(
-        "/tcia/app/images/orthanc-logo.png");
+        RegisterEmbeddedResource<EmbeddedResources::BOOTSTRAP_MIN_CSS_MAP, MimeType_Binary>(
+          "/tcia/app/css/bootstrap.min.css.map");
 
-      RegisterEmbeddedResource<EmbeddedResources::NBIA_EXPORT, MimeType_Png>(
-        "/tcia/app/images/nbia-export.png");
+        RegisterEmbeddedResource<EmbeddedResources::AXIOS_MIN_JS, MimeType_JavaScript>(
+          "/tcia/app/js/axios.min.js");
+
+        RegisterEmbeddedResource<EmbeddedResources::AXIOS_MIN_MAP, MimeType_JavaScript>(
+          "/tcia/app/js/axios.min.map");
+
+        RegisterEmbeddedResource<EmbeddedResources::VUE_MIN_JS, MimeType_JavaScript>(
+          "/tcia/app/js/vue.min.js");
+
+        RegisterEmbeddedResource<EmbeddedResources::TCIA_LOGO, MimeType_Png>(
+          "/tcia/app/images/tcia-logo.png");
+
+        RegisterEmbeddedResource<EmbeddedResources::ORTHANC_LOGO, MimeType_Png>(
+          "/tcia/app/images/orthanc-logo.png");
+
+        RegisterEmbeddedResource<EmbeddedResources::NBIA_EXPORT, MimeType_Png>(
+          "/tcia/app/images/nbia-export.png");
+      }
+    }
+    catch (Orthanc::OrthancException& e)
+    {
+      LOG(ERROR) << "Exception while initializing the TCIA plugin: " << e.What();
+      return -1;
     }
 
     return 0;
