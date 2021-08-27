@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TCIA for Orthanc</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="container theme-showcase" role="main" style="padding-top:20px" id="app">
+
+      <div class="jumbotron" style="background-color: #00142a">
+        <a name="import-status"></a>
+        <div class="row justify-content-center">
+          <a href="https://www.cancerimagingarchive.net/" target="_blank">
+            <img src="images/tcia-logo.png" class="mb-4" style="max-width:100%" />
+          </a>
+        </div>
+        <div class="row justify-content-center">
+          <a href="../app/explorer.html" target="_blank">
+            <img src="images/orthanc-logo.png" class="mt-4" style="max-width:100%" width="256px" />
+          </a>
+        </div>
+      </div>
+      
+      <div class="container mb-4" v-show="jobId" style="display:none">
+        <h1 class="mb-4">Status of import</h1>
+
+        <div class="row mb-4 justify-content-lg-center">
+          <div class="col-lg-4">
+            <button type="button" class="btn btn-primary btn-block" v-on:click="openJob">Open job</button>
+          </div>
+          <div class="col-lg-4">
+            <button type="button" class="btn btn-primary btn-block" v-on:click="refreshSeriesCount">Refresh</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12">
+            <table class="table table-bordered table-hover table-sm">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Collection</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Instances</th>
+                  <th scope="col">Total size</th>
+                  <th scope="col">Completed series</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="patient in importedPatients">
+                  <td>{{ patient.Collection }}</td>
+                  <td>
+                    <div v-if="patient.CompletedSeries > 0">
+                      <a v-bind:href="'../../app/explorer.html#patient?uuid=' + patient.OrthancID" target="_blank">
+                        {{ patient.PatientID }}
+                      </a>
+                    </div>
+                    <div v-if="patient.CompletedSeries == 0">
+                      {{ patient.PatientID }}
+                    </div>
+                  </td>
+                  <td>{{ patient.InstancesCount }}</td>
+                  <td>
+                    <span v-if="patient.Size == 0"><i>Unknown</i></span>
+                    <span v-if="patient.Size != 0">
+                      {{ Math.round(patient.Size / (1024 * 1024)) }} MB
+                    </span>
+                  </td>
+                  <td v-bind:class="{ 'bg-success': patient.CompletedSeries == patient.SeriesInstanceUID.length }">
+                    {{ patient.CompletedSeries }} / {{ patient.SeriesInstanceUID.length }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      
+      <div class="container mb-4">
+        <h1>Import NBIA cart</h1>
+        <p>
+          Import into Orthanc the content of a cart that has been
+          exported as a spreasheet from
+          the <a href="https://nbia.cancerimagingarchive.net/nbia-search/"
+          target="_blank">NBIA Search Client</a>
+          (cf. <a href="images/nbia-export.png"
+          target="_blank">screenshot</a>).
+        </p>
+
+        <div class="row">
+          <div class="col-lg-12 mb-4">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="cart" ref="cart" />
+              <label class="custom-file-label" for="cart">Choose file</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row justify-content-lg-center">
+          <div class="col-lg-4">
+            <button type="button" class="btn btn-primary btn-block" v-on:click="importCart">Submit</button>
+          </div>
+        </div>
+      </div>
+      
+      
+      <div class="container">
+        <a name="explore-tcia"></a>
+        <h1>Explore TCIA collections</h1>
+
+        <p>
+          Note that loading the information about the TCIA collections
+          takes time because of the throttling that is applied to the
+          <a
+          href="https://wiki.cancerimagingarchive.net/display/Public/TCIA+REST+API+Guide"
+          target="_blank">REST API of TCIA</a>. Orthanc caches this
+          information in memory to speed up further access to the same
+          resources. This cache can be cleared using the button at the
+          bottom of this page.
+        </p>
+
+        <form action="javascript:void(0);">
+          <div class="form-group row">
+            <label for="collections-filter" class="col-sm-2 col-form-label">Filter:</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="collections-filter" v-model="filter">
+            </div>
+          </div>
+        </form>
+
+        <div class="row" v-if="activeCollection == ''">
+          <div class="col-lg-12">
+            <table class="table table-bordered table-hover table-sm">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Collection</th>
+                  <th scope="col">Modalities</th>
+                  <th scope="col">Body parts</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="collection in collections"
+                    v-if="globStringToRegex(filter).test(collection.Name + ' ' + collection.Modalities + ' ' + collection.BodyParts)">
+                  <td>{{ collection.Name }}</td>
+                  <td>{{ collection.Modalities }}</td>
+                  <td>{{ collection.BodyParts }}</td>
+                  <td style="text-align: center;">
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            v-on:click="openCollection(collection.Name)">&triangleright;</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row" v-if="activeCollection != '' && activePatientId == ''">
+          <div class="col-lg-12">
+            <p>
+              <button type="button" class="btn btn-outline-danger"
+                      v-on:click="listCollections()">&triangleleft; Back</button>
+            </p>
+            <p>
+              List of the {{ patients.length}} subjects from collection <b>{{ activeCollection }}</b>:
+            </p>
+            
+            <table class="table table-bordered table-hover table-sm">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Patient ID</th>
+                  <th scope="col">Patient name</th>
+                  <th scope="col">Patient sex</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="patient in patients"
+                    v-if="globStringToRegex(filter).test(patient.PatientID + ' ' + patient.PatientName + ' ' + patient.PatientSex)">
+                  <td>{{ patient.PatientID }}</td>
+                  <td>{{ patient.PatientName }}</td>
+                  <td>{{ patient.PatientSex }}</td>
+                  <td style="text-align: center;">
+                    <button type="button" class="btn btn-outline-primary btn-sm"
+                            v-on:click="openPatient(patient.PatientID)">&triangleright;</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row" v-if="activeCollection != '' && activePatientId != ''">
+          <div class="col-lg-12">
+            <p>
+              <button type="button" class="btn btn-outline-danger"
+                      v-on:click="listPatients()">&triangleleft; Back</button>
+              <button type="button" class="btn btn-success" :disabled="allSelectedSeries == 0"
+                      v-on:click="importSelectedSeries">Import the {{ allSelectedSeries }} selected series</button>
+            </p>
+            <p>
+              List of the {{ studies.length }} studies from
+              patient <b>{{ activePatientId }}</b> in collection <b>{{
+              activeCollection }}</b>:
+            </p>
+            
+            <table class="table table-sm table-bordered">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Study date</th>
+                  <th scope="col">Study description</th>
+                  <th scope="col">Patient age</th>
+                  <th scope="col">Selected series</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="study in studies"
+                          v-if="globStringToRegex(filter).test(study.StudyDate + ' ' + study.StudyDescription + ' ' + study.PatientAge)">
+                  <tr v-for="tmpCountSelected in [ countSelectedSeries(study.StudyInstanceUID) ]">
+                    <td style="text-align: center;">
+                      <button v-if="tmpCountSelected == 0" type="button" class="btn btn-outline-danger btn-sm"
+                              v-on:click="setAllSeries(study.StudyInstanceUID, true)">
+                        &cross;
+                      </button>
+                      <button v-if="tmpCountSelected != 0 && tmpCountSelected != study.SeriesCount"
+                              type="button" class="btn btn-warning btn-sm"
+                              v-on:click="setAllSeries(study.StudyInstanceUID, true)">
+                        &check;
+                      </button>
+                      <button v-if="tmpCountSelected != 0 && tmpCountSelected == study.SeriesCount"
+                              type="button" class="btn btn-success btn-sm"
+                              v-on:click="setAllSeries(study.StudyInstanceUID, false)">
+                        &check;
+                      </button>
+                      &nbsp;
+                      <button type="button" class="btn btn-outline-primary btn-sm"
+                              v-if="Object.keys(series).length != 0 && openedStudies[study.StudyInstanceUID] === true"
+                              v-on:click="closeStudy(study.StudyInstanceUID)">
+                        &triangledown;
+                      </button>
+                      <button type="button" class="btn btn-outline-primary btn-sm"
+                              v-if="Object.keys(series).length != 0 && openedStudies[study.StudyInstanceUID] !== true"
+                              v-on:click="openStudy(study.StudyInstanceUID)">
+                        &triangleright;
+                      </button>
+                    </td>
+                    <td>{{ study.StudyDate }}</td>
+                    <td>{{ study.StudyDescription }}</td>
+                    <td>{{ study.PatientAge }}</td>
+                    <td>{{ tmpCountSelected }} / {{ study.SeriesCount }}</td>
+                  </tr>
+
+                  <tr v-if="(series[study.StudyInstanceUID] !== undefined) && openedStudies[study.StudyInstanceUID] === true">
+                    <td></td>
+                    <td colspan="5">
+                      <table class="table-bordered table-hover table-sm" style="width:100%;">
+                        <thead class="thead-light">
+                          <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Series description</th>
+                            <th scope="col">Modality</th>
+                            <th scope="col">Body part</th>
+                            <th scope="col">Manufacturer</th>
+                            <th scope="col">Instances count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="item in series[study.StudyInstanceUID]">
+                            <td style="text-align: center;">
+                              <div class="form-check">
+                                <input class="form-check-input position-static" type="checkbox"
+                                       v-model="selectedSeries[item.SeriesInstanceUID]">
+                              </div>
+                            </td>
+                            <td>{{ item.SeriesDescription }}</td>
+                            <td>{{ item.Modality }}</td>
+                            <td>{{ item.BodyPartExamined }}</td>
+                            <td>{{ item.Manufacturer }}</td>
+                            <td>{{ item.ImageCount }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row justify-content-lg-center mb-4">
+          <div class="col-lg-4">
+            <button type="button" class="btn btn-danger btn-block" v-on:click="clearCache">Clear cache</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <script src="js/axios.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
