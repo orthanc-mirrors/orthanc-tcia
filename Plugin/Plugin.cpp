@@ -63,9 +63,9 @@ static OrthancPluginJob* TciaJobUnserializer(const char *jobType,
 
 
 
-static void TciaHttpProxy(OrthancPluginRestOutput* output,
-                          const char* url,
-                          const OrthancPluginHttpRequest* request)
+void TciaHttpProxy(OrthancPluginRestOutput* output,
+                   const char* url,
+                   const OrthancPluginHttpRequest* request)
 {
   if (request->method != OrthancPluginHttpMethod_Get)
   {
@@ -138,9 +138,9 @@ static void TciaHttpProxy(OrthancPluginRestOutput* output,
 }
 
 
-static void TciaImport(OrthancPluginRestOutput* output,
-                       const char* url,
-                       const OrthancPluginHttpRequest* request)
+void TciaImport(OrthancPluginRestOutput* output,
+                const char* url,
+                const OrthancPluginHttpRequest* request)
 {
   if (request->method != OrthancPluginHttpMethod_Post)
   {
@@ -189,9 +189,9 @@ static void TciaImport(OrthancPluginRestOutput* output,
 }
 
 
-static void ServeHtml(OrthancPluginRestOutput* output,
-                      const char* url,
-                      const OrthancPluginHttpRequest* request)
+void ServeHtml(OrthancPluginRestOutput* output,
+               const char* url,
+               const OrthancPluginHttpRequest* request)
 {
   if (request->method != OrthancPluginHttpMethod_Get)
   {
@@ -204,7 +204,7 @@ static void ServeHtml(OrthancPluginRestOutput* output,
 #if ORTHANC_STANDALONE == 1
     Orthanc::EmbeddedResources::GetFileResource(s, Orthanc::EmbeddedResources::TCIA_HTML);
 #else
-    Orthanc::SystemToolbox::ReadFile(s, std::string(PLUGIN_SOURCE_DIR) + "/WebApplication/index.html");
+    Orthanc::SystemToolbox::ReadFile(s, std::string(TCIA_SOURCE_DIR) + "/WebApplication/index.html");
 #endif
     
     OrthancPluginAnswerBuffer(OrthancPlugins::GetGlobalContext(), output,
@@ -213,9 +213,9 @@ static void ServeHtml(OrthancPluginRestOutput* output,
 }
 
 
-static void ServeJavaScript(OrthancPluginRestOutput* output,
-                            const char* url,
-                            const OrthancPluginHttpRequest* request)
+void ServeJavaScript(OrthancPluginRestOutput* output,
+                     const char* url,
+                     const OrthancPluginHttpRequest* request)
 {
   if (request->method != OrthancPluginHttpMethod_Get)
   {
@@ -228,7 +228,7 @@ static void ServeJavaScript(OrthancPluginRestOutput* output,
 #if ORTHANC_STANDALONE == 1
     Orthanc::EmbeddedResources::GetFileResource(s, Orthanc::EmbeddedResources::TCIA_JS);
 #else
-    Orthanc::SystemToolbox::ReadFile(s, std::string(PLUGIN_SOURCE_DIR) + "/WebApplication/app.js");
+    Orthanc::SystemToolbox::ReadFile(s, std::string(TCIA_SOURCE_DIR) + "/WebApplication/app.js");
 #endif
 
     OrthancPluginAnswerBuffer(OrthancPlugins::GetGlobalContext(), output,
@@ -237,9 +237,9 @@ static void ServeJavaScript(OrthancPluginRestOutput* output,
 }
 
 
-static void ClearCache(OrthancPluginRestOutput* output,
-                       const char* url,
-                       const OrthancPluginHttpRequest* request)
+void ClearCache(OrthancPluginRestOutput* output,
+                const char* url,
+                const OrthancPluginHttpRequest* request)
 {
   if (request->method != OrthancPluginHttpMethod_Post)
   {
@@ -256,9 +256,9 @@ static void ClearCache(OrthancPluginRestOutput* output,
 
 template <enum Orthanc::EmbeddedResources::FileResourceId resource,
           enum Orthanc::MimeType mime>
-static void ServeEmbeddedResource(OrthancPluginRestOutput* output,
-                                  const char* url,
-                                  const OrthancPluginHttpRequest* request)
+void ServeEmbeddedResource(OrthancPluginRestOutput* output,
+                           const char* url,
+                           const OrthancPluginHttpRequest* request)
 {
   if (request->method != OrthancPluginHttpMethod_Get)
   {
