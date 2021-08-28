@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <Compatibility.h>
+
 #include "../Resources/Orthanc/Plugins/OrthancPluginCppWrapper.h"
 
 

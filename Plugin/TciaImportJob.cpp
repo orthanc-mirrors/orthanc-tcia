@@ -175,8 +175,8 @@ namespace OrthancPlugins
     static const char* const COLLECTION_NAME = "Collection Name";
     static const char* const SUBJECT_ID = "Subject ID";
     static const char* const SERIES_ID = "Series ID";
-    static const char* const INSTANCES_COUNT = "Number of images";
-    static const char* const SIZE = "File Size (Bytes)";
+    static const char* const NUMBER_OF_IMAGES = "Number of images";
+    static const char* const FILE_SIZE = "File Size (Bytes)";
       
     OrthancPlugins::CsvParser parser;
     parser.Parse(csv);
@@ -187,8 +187,8 @@ namespace OrthancPlugins
     std::map<std::string, size_t>::const_iterator collectionName = index.find(COLLECTION_NAME);
     std::map<std::string, size_t>::const_iterator subjectId = index.find(SUBJECT_ID);
     std::map<std::string, size_t>::const_iterator seriesId = index.find(SERIES_ID);
-    std::map<std::string, size_t>::const_iterator instancesCount = index.find(INSTANCES_COUNT);
-    std::map<std::string, size_t>::const_iterator size = index.find(SIZE);
+    std::map<std::string, size_t>::const_iterator instancesCount = index.find(NUMBER_OF_IMAGES);
+    std::map<std::string, size_t>::const_iterator size = index.find(FILE_SIZE);
 
     if (collectionName == index.end())
     {
@@ -208,12 +208,12 @@ namespace OrthancPlugins
     else if (instancesCount == index.end())
     {
       throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat,
-                                      "Invalid TCIA cart, missing column: " + std::string(INSTANCES_COUNT));
+                                      "Invalid TCIA cart, missing column: " + std::string(NUMBER_OF_IMAGES));
     }
     else if (size == index.end())
     {
       throw Orthanc::OrthancException(Orthanc::ErrorCode_BadFileFormat,
-                                      "Invalid TCIA cart, missing column: " + std::string(SIZE));
+                                      "Invalid TCIA cart, missing column: " + std::string(FILE_SIZE));
     }
     else
     {
