@@ -53,7 +53,7 @@ include(${CMAKE_SOURCE_DIR}/Resources/Orthanc/CMake/DownloadOrthancFramework.cma
 if (ORTHANC_FRAMEWORK_SOURCE STREQUAL "system")
   if (ORTHANC_FRAMEWORK_USE_SHARED)
     include(FindBoost)
-    find_package(Boost COMPONENTS)
+    find_package(Boost COMPONENTS thread)
     
     if (NOT Boost_FOUND)
       message(FATAL_ERROR "Unable to locate Boost on this system")
