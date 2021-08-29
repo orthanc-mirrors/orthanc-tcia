@@ -69,11 +69,9 @@ namespace OrthancPlugins
 
     if (source.isMember(SIZE))
     {
-      const std::string s = Orthanc::SerializationToolbox::ReadString(source, SIZE);
-      
       try
       {
-        size = boost::lexical_cast<uint64_t>(size);
+        size = boost::lexical_cast<uint64_t>(Orthanc::SerializationToolbox::ReadString(source, SIZE));
       }
       catch (boost::bad_lexical_cast&)
       {
