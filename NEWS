@@ -1,6 +1,8 @@
 Pending changes in the mainline
 ===============================
 
+* Fix import of collections with a space in their names
+
 
 Version 1.0 (2021-08-29)
 ========================

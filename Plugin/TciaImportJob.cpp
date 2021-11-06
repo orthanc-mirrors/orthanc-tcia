@@ -260,9 +260,9 @@ namespace OrthancPlugins
     else
     {
       const Series& series = series_[position_];
-      const std::string url = (
-        std::string(TCIA_BASE_URL) + "/getImage?Collection" + series.GetCollection() +
-        "&SeriesInstanceUID=" + series.GetSeriesInstanceUid());
+
+      const std::string url = (std::string(TCIA_BASE_URL) +
+                               "/getImage?SeriesInstanceUID=" + series.GetSeriesInstanceUid());
 
       Json::Value query;
       query["Level"] = "Instance";
