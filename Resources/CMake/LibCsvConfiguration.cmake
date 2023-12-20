@@ -19,7 +19,7 @@ if (STATIC_BUILD OR NOT USE_SYSTEM_LIBCSV)
   set(LIBCSV_SOURCES_DIR ${CMAKE_BINARY_DIR}/libcsv-3.0.3)
   DownloadPackage(
     "d3307a7bd41d417da798cd80c80aa42a"
-    "https://third-party.orthanc-labs.com/libcsv-3.0.3.tar.gz"
+    "https://orthanc.uclouvain.be/downloads/third-party-downloads/libcsv-3.0.3.tar.gz"
     "${LIBCSV_SOURCES_DIR}")
 
   include_directories(
