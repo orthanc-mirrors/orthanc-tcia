@@ -3,8 +3,8 @@
 # Orthanc - A Lightweight, RESTful DICOM Store
 # Copyright (C) 2012-2016 Sebastien Jodogne, Medical Physics
 # Department, University Hospital of Liege, Belgium
-# Copyright (C) 2017-2021 Osimis S.A., Belgium
-# Copyright (C) 2021 Sebastien Jodogne, ICTEAM, UCLouvain, Belgium
+# Copyright (C) 2017-2024 Osimis S.A., Belgium
+# Copyright (C) 2021-2024 Sebastien Jodogne, ICTEAM UCLouvain, Belgium
 #
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
@@ -71,8 +71,8 @@ with open(SOURCE, 'r') as source:
     content = content.replace('${VERSION_PATCH}', v[2])
     content = content.replace('${RELEASE}', RELEASE)
     content = content.replace('${DESCRIPTION}', DESCRIPTION)
-    content = content.replace('${PRODUCT}', PRODUCT)
-    content = content.replace('${FILENAME}', FILENAME)
+    content = content.replace('${PRODUCT}', PRODUCT)   
+    content = content.replace('${FILENAME}', FILENAME)   
     content = content.replace('${YEAR}', str(datetime.datetime.now().year))
     content = content.replace('${BLOCK}', BLOCK)
     content = content.replace('${TYPE}', TYPE)

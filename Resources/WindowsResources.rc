@@ -11,11 +11,11 @@ VS_VERSION_INFO VERSIONINFO
          BLOCK "${BLOCK}"
          BEGIN
             VALUE "Comments", "${RELEASE}"
-            VALUE "CompanyName", "UCLouvain, Belgium"
+            VALUE "CompanyName", "The Orthanc project"
             VALUE "FileDescription", "${DESCRIPTION}"
             VALUE "FileVersion", "${VERSION_MAJOR}.${VERSION_MINOR}.0.${VERSION_PATCH}"
             VALUE "InternalName", "${PRODUCT}"
-            VALUE "LegalCopyright", "(c) ${YEAR}, Sebastien Jodogne, ICTEAM, UCLouvain, Belgium"
+            VALUE "LegalCopyright", "(c) 2012-${YEAR}, Sebastien Jodogne, University Hospital of Liege, Osimis S.A., and ICTEAM UCLouvain"
             VALUE "LegalTrademarks", "Licensing information is available at https://orthanc.uclouvain.be/book/faq/licensing.html"
             VALUE "OriginalFilename", "${FILENAME}"
             VALUE "ProductName", "${PRODUCT}"
