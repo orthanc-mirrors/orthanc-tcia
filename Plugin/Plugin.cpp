@@ -300,7 +300,7 @@ extern "C"
       return -1;
     }
 
-    OrthancPluginSetDescription(context, "Interface with TCIA (The Cancer Imaging Archive).");
+    OrthancPlugins::SetDescription(ORTHANC_PLUGIN_NAME, "Interface with TCIA (The Cancer Imaging Archive).");
 
     try
     {
@@ -324,13 +324,13 @@ extern "C"
         return 0;
       }
       
-      OrthancPluginSetRootUri(context, "/tcia/app/index.html");
+      OrthancPlugins::SetRootUri(ORTHANC_PLUGIN_NAME, "/tcia/app/index.html");
 
       {
         std::string explorer;
         Orthanc::EmbeddedResources::GetFileResource(
           explorer, Orthanc::EmbeddedResources::ORTHANC_EXPLORER_JS);
-        OrthancPluginExtendOrthancExplorer(OrthancPlugins::GetGlobalContext(), explorer.c_str());
+        OrthancPlugins::ExtendOrthancExplorer(ORTHANC_PLUGIN_NAME, explorer);
       }
   
       OrthancPluginRegisterJobsUnserializer(context, TciaJobUnserializer);
@@ -387,7 +387,7 @@ extern "C"
 
   ORTHANC_PLUGINS_API const char* OrthancPluginGetName()
   {
-    return "tcia";
+    return ORTHANC_PLUGIN_NAME;
   }
 
 

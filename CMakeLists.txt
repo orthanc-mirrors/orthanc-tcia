@@ -109,6 +109,7 @@ endif()
 
 add_definitions(
   -DHAS_ORTHANC_EXCEPTION=1
+  -DORTHANC_PLUGIN_NAME="tcia"
   -DORTHANC_PLUGIN_VERSION="${ORTHANC_PLUGIN_VERSION}"
   -DTCIA_BASE_URL="https://services.cancerimagingarchive.net/services/v4/TCIA/query"
   )
