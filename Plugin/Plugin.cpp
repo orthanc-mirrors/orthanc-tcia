@@ -126,7 +126,8 @@ void TciaHttpProxy(OrthancPluginRestOutput* output,
 
         OrthancPlugins::HttpCache::GetInstance().Write(tcia, body.GetData(), body.GetSize(), mime);
 
-        OrthancPluginAnswerBuffer(OrthancPlugins::GetGlobalContext(), output, body.GetData(), body.GetSize(), mime.c_str());
+        OrthancPluginAnswerBuffer(OrthancPlugins::GetGlobalContext(), output,
+                                  reinterpret_cast<const char*>(body.GetData()), body.GetSize(), mime.c_str());
       }
       else
       {

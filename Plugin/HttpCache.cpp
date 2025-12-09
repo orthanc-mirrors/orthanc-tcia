@@ -38,11 +38,11 @@ namespace OrthancPlugins
     std::string               mime_;
       
   public:
-    Item(const char* bodyData,
+    Item(const void* bodyData,
          size_t bodySize,
          const std::string& mime) :
       time_(GetNow()),
-      body_(bodyData, bodySize),
+      body_(reinterpret_cast<const char*>(bodyData), bodySize),
       mime_(mime)
     {
     }
@@ -137,7 +137,7 @@ namespace OrthancPlugins
 
 
   void HttpCache::Write(const std::string& key,
-                        const char* bodyData,
+                        const void* bodyData,
                         size_t bodySize,
                         const std::string& mime)
   {

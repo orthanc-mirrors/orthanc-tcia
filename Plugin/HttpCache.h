@@ -58,7 +58,7 @@ namespace OrthancPlugins
               const std::string& key);
     
     void Write(const std::string& key,
-               const char* bodyData,
+               const void* bodyData,
                size_t bodySize,
                const std::string& mime);
     
