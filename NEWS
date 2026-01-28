@@ -1,6 +1,12 @@
 Pending changes in the mainline
 ===============================
 
+* Replaced default base URL of TCIA REST API from
+  "https://services.cancerimagingarchive.net/services/v4/TCIA/query" to
+  "https://nbia.cancerimagingarchive.net/nbia-api/services/v4"
+* Added configuration option "BaseUrl" to manually configure the base URL
+* Fix for newer versions of the NBIA cart file format
+
 
 Version 1.2 (2024-03-26)
 ========================

@@ -73,10 +73,7 @@ void TciaHttpProxy(OrthancPluginRestOutput* output,
   }
   else
   {
-    assert(TCIA_BASE_URL[strlen(TCIA_BASE_URL) - 1] != '/' &&
-           TCIA_BASE_URL[strlen(TCIA_BASE_URL)] == 0);
-    
-    std::string tcia = std::string(TCIA_BASE_URL) + "/" + std::string(request->groups[0]);
+    std::string tcia = OrthancPlugins::TciaImportJob::GetTciaUrl(request->groups[0]);
 
     for (uint32_t i = 0; i < request->getCount; i++)
     {
@@ -105,12 +102,14 @@ void TciaHttpProxy(OrthancPluginRestOutput* output,
     {
       OrthancPlugins::MemoryBuffer body, headersBuffer;
       uint16_t status;
-    
+
       if (OrthancPluginErrorCode_Success == OrthancPluginHttpClient(
             OrthancPlugins::GetGlobalContext(), *body, *headersBuffer, &status,
             OrthancPluginHttpMethod_Get, tcia.c_str(),
-            0, NULL, NULL, NULL, 0, "" /* username */, "" /* password */,
-            0 /* default timeout */, NULL, NULL, NULL, 0))
+            0 /* HTTP headers in request */, NULL, NULL,
+            NULL /* body */, 0,
+            NULL /* username */, NULL /* password */,
+            0 /* use default timeout */, NULL, NULL, NULL, 0))
       {
         Json::Value headers;
         headersBuffer.ToJson(headers);
@@ -303,6 +302,8 @@ extern "C"
 
     OrthancPlugins::SetDescription(ORTHANC_PLUGIN_NAME, "Interface with TCIA (The Cancer Imaging Archive).");
 
+    OrthancPlugins::TciaImportJob::SetTciaBaseUrl(TCIA_BASE_URL);
+
     try
     {
       static const char* const KEY_TCIA = "Tcia";
@@ -323,6 +324,14 @@ extern "C"
         LOG(WARNING) << "The TCIA index is currently disabled, set \"Enable\" "
                      << "to \"true\" in the \"" << KEY_TCIA << "\" section of the configuration file of Orthanc";
         return 0;
+      }
+
+      {
+        std::string s;
+        if (tcia.LookupStringValue(s, "BaseUrl"))
+        {
+          OrthancPlugins::TciaImportJob::SetTciaBaseUrl(s);
+        }
       }
       
       OrthancPlugins::SetRootUri(ORTHANC_PLUGIN_NAME, "/tcia/app/index.html");

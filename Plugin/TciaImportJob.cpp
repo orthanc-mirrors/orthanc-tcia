@@ -36,6 +36,9 @@ static const char* const SERIES_INSTANCE_UID = "SeriesInstanceUID";
 static const char* const SIZE = "Size";
 
 
+static std::string tciaBaseUrl_;
+
+
 namespace OrthancPlugins
 {
   TciaImportJob::Series::Series(const std::string& collection,
@@ -170,11 +173,23 @@ namespace OrthancPlugins
   
   void TciaImportJob::AddNbiaClientSpreadsheet(const std::string& csv)
   {
+#if 1
+    // Values that are used since orthanc-tcia 1.3
+    static const char* const COLLECTION_NAME = "Collection";
+    static const char* const SUBJECT_ID = "PatientID";
+    static const char* const SERIES_ID = "SeriesInstanceUID";
+    static const char* const NUMBER_OF_IMAGES = "ImageCount";
+    static const char* const FILE_SIZE = "FileSize";
+#endif
+
+#if 0
+    // Values that were used in orthanc-tcia <= 1.2
     static const char* const COLLECTION_NAME = "Collection Name";
     static const char* const SUBJECT_ID = "Subject ID";
     static const char* const SERIES_ID = "Series ID";
     static const char* const NUMBER_OF_IMAGES = "Number of images";
     static const char* const FILE_SIZE = "File Size (Bytes)";
+#endif
       
     OrthancPlugins::CsvParser parser;
     parser.Parse(csv);
@@ -340,6 +355,44 @@ namespace OrthancPlugins
       job->UpdateInfo();
         
       return job.release();
+    }
+  }
+
+
+  std::string TciaImportJob::GetTciaUrl(const std::string& path)
+  {
+    if (tciaBaseUrl_.empty())
+    {
+      throw Orthanc::OrthancException(Orthanc::ErrorCode_BadSequenceOfCalls);
+    }
+    else if (tciaBaseUrl_[tciaBaseUrl_.size() - 1] == '/')
+    {
+      throw Orthanc::OrthancException(Orthanc::ErrorCode_InternalError);
+    }
+    else
+    {
+      return tciaBaseUrl_ + "/" + path;
+    }
+  }
+
+
+  void TciaImportJob::SetTciaBaseUrl(const std::string& url)
+  {
+    std::string s = url;
+
+    while (!s.empty() &&
+           s[s.size() - 1] == '/')
+    {
+      s.resize(s.size() - 1);
+    }
+
+    if (s.empty())
+    {
+      throw Orthanc::OrthancException(Orthanc::ErrorCode_ParameterOutOfRange);
+    }
+    else
+    {
+      tciaBaseUrl_ = s;
     }
   }
 }

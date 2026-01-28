@@ -117,5 +117,9 @@ namespace OrthancPlugins
     static std::string GetJobType();
     
     static TciaImportJob* Unserialize(const Json::Value& serialized);
+
+    static std::string GetTciaUrl(const std::string& path);
+
+    static void SetTciaBaseUrl(const std::string& url);
   };
 }

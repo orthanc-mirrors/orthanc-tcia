@@ -118,7 +118,7 @@
           Note that loading the information about the TCIA collections
           takes time because of the throttling that is applied to the
           <a
-          href="https://wiki.cancerimagingarchive.net/display/Public/TCIA+REST+API+Guide"
+          href="https://wiki.cancerimagingarchive.net/display/Public/TCIA+Programmatic+Interface+REST+API+Guides"
           target="_blank">REST API of TCIA</a>. Orthanc caches this
           information in memory to speed up further access to the same
           resources. This cache can be cleared using the button at the
@@ -182,13 +182,13 @@
               </thead>
               <tbody>
                 <tr v-for="patient in patients"
-                    v-if="globStringToRegex(filter).test(patient.PatientID + ' ' + patient.PatientName + ' ' + patient.PatientSex)">
-                  <td>{{ patient.PatientID }}</td>
+                    v-if="globStringToRegex(filter).test(patient.PatientId + ' ' + patient.PatientName + ' ' + patient.PatientSex)">
+                  <td>{{ patient.PatientId }}</td>
                   <td>{{ patient.PatientName }}</td>
                   <td>{{ patient.PatientSex }}</td>
                   <td style="text-align: center;">
                     <button type="button" class="btn btn-outline-primary btn-sm"
-                            v-on:click="openPatient(patient.PatientID)">&triangleright;</button>
+                            v-on:click="openPatient(patient.PatientId)">&triangleright;</button>
                   </td>
                 </tr>
               </tbody>
