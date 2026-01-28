@@ -1,6 +1,10 @@
 Pending changes in the mainline
 ===============================
 
+
+Version 1.3 (2026-01-28)
+========================
+
 * Replaced default base URL of TCIA REST API from
   "https://services.cancerimagingarchive.net/services/v4/TCIA/query" to
   "https://nbia.cancerimagingarchive.net/nbia-api/services/v4"

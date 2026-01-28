@@ -3,14 +3,15 @@
 
 cff-version: "1.1.0"
 message: "If you use this software, please cite it using these metadata."
-title: "Importing and serving open-data medical images to support artificial intelligence research"
+title: Orthanc
+abstract: "Orthanc is a lightweight open-source DICOM server for medical imaging supporting representational state transfer (REST)."
 authors:
   -
     affiliation: UCLouvain
     family-names: Jodogne
     given-names: "Sébastien"
-doi: "10.1186/s13244-022-01168-w"
+doi: "10.1007/s10278-018-0082-y"
 license: "GPL-3.0-or-later"
-repository-code: "https://orthanc.uclouvain.be/hg/orthanc-tcia/"
-version: "1.0"
-date-released: 2024-03-26
+repository-code: "https://orthanc.uclouvain.be/hg/orthanc/"
+version: 1.12.10
+date-released: 2025-11-26
